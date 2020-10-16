@@ -1,24 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
 import './App.css';
+import fire from './fire';
 
 function App() {
+  var [message, setMessage] = useState([])
+  var newMessage;
+  const updateMessage = (e) =>{
+    newMessage = e.target.value;
+    
+  }
+  var showMessage;
+  // var key = fire.database().ref('/').push().key
+  // var messages = {
+  //   value: message,
+  //   // key: key
+  // }
+  
+  
+  fire.database().ref().on('child_added',function(data){
+    showMessage = data
+    console.log(showMessage.val())
+  })
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+      <input type = "text" placeholder = "Please enter a message" onChange = {updateMessage}></input>
+      <button onClick={()=>{
+        setMessage([...message,newMessage]);fire.database().ref().push(newMessage)}} >Submit</button>
+        <div>
+        {message.map((value, index)=>{
+          return(
+            <div key = {index}>
+              <h6>{value}</h6>
+            </div>
+          )
+        })}
+        </div>
     </div>
   );
 }
